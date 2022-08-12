@@ -98,11 +98,10 @@ module RBTree {
   func fitInsert(root: RBTree, n: Node, parent: Node, gp: Node): () {
     var node = n;
     label l loop {
-      if (nodeEquals(?parent, gp.right)) {
+      if (nodeKeyEquals(?parent, gp.right)) {
         switch(gp.left) {
-          //case null { assert false };
           case null { 
-            if (nodeEquals(?node, parent.left)) {
+            if (nodeKeyEquals(?node, parent.left)) {
               node := parent;
               rightRotate(root, node)
             };
@@ -118,7 +117,7 @@ module RBTree {
               gp.red := true;
               node := gp;
             } else {
-              if (nodeEquals(?node, parent.left)) {
+              if (nodeKeyEquals(?node, parent.left)) {
                 node := parent;
                 rightRotate(root, node)
               };
@@ -131,9 +130,8 @@ module RBTree {
         }
       } else {
         switch(gp.right) {
-          //case null { assert false };
           case null { 
-            if (nodeEquals(?node, parent.right)) {
+            if (nodeKeyEquals(?node, parent.right)) {
               node := parent;
               leftRotate(root, node)
             };
@@ -148,7 +146,7 @@ module RBTree {
               parent.red := false;
               gp.red := true;
             } else {
-              if (nodeEquals(?node, parent.right)) {
+              if (nodeKeyEquals(?node, parent.right)) {
                 node := parent;
                 leftRotate(root, node)
               };
@@ -161,7 +159,7 @@ module RBTree {
         }
       };
 
-      if (nodeEquals(?node, root.tree)) {
+      if (nodeKeyEquals(?node, root.tree)) {
         break l;
       };
 
@@ -189,7 +187,7 @@ module RBTree {
         switch(node.parent) {
           case null { root.tree := ?parent };
           case (?p) {
-            if (nodeEquals(?node, p.left)) {
+            if (nodeKeyEquals(?node, p.left)) {
               p.left := ?parent;
             } else {
               p.right := ?parent;
@@ -220,7 +218,7 @@ module RBTree {
         switch(node.parent) {
           case null { root.tree := ?parent };
           case (?p) {
-            if (nodeEquals(?node, p.right)) {
+            if (nodeKeyEquals(?node, p.right)) {
               p.right := ?parent;
             } else {
               p.left := ?parent;
@@ -234,12 +232,10 @@ module RBTree {
     }
   };
 
-  func nodeEquals(n1: ?Node, n2: ?Node): Bool {
+  func nodeKeyEquals(n1: ?Node, n2: ?Node): Bool {
     switch(n1, n2) {
       case (null, null) { true };
-      case (?n1, ?n2) {
-        n1.key == n2.key and n1.value == n2.value and n1.red == n2.red
-      };
+      case (?n1, ?n2) { n1.key == n2.key };
       case _ { false }
     }
   };
