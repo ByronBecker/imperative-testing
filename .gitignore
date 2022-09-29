@@ -1,1 +1,5 @@
 .vessel
+reference
+frontend
+.dfx
+**.DS_Store
