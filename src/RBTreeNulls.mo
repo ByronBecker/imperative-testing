@@ -2,7 +2,7 @@ import Debug "mo:base/Debug";
 
 module RBTree {
 
-  type Node = {
+  public type Node = {
     var red: Bool;
     var parent: ?Node;
     key: Text;
@@ -84,25 +84,33 @@ module RBTree {
           p.right := ?node;
         };
 
-        switch(p.parent) {
-          case null { return };
-          case (?gp) {
-            fitInsert(root, node, p, gp);
-          }
-        }
+        fitInsert(root, node, p);
       }
     };
   };
 
   // If necessary, fix node red/black coloring and rotate 
-  func fitInsert(root: RBTree, n: Node, parent: Node, gp: Node): () {
-    var node = n;
+  func fitInsert(root: RBTree, nodeStart: Node, parentStart: Node): () {
+    var node = nodeStart;
+    var parent = parentStart; 
     label l loop {
+      if (not parent.red) {
+        break l;
+      };
+      let gp = switch (parent.parent) {
+        case null { 
+          break l;
+        };
+        case (?existent) existent;
+      };
+      
       if (nodeKeyEquals(?parent, gp.right)) {
         switch(gp.left) {
           case null { 
             if (nodeKeyEquals(?node, parent.left)) {
+              var temp = node;
               node := parent;
+              parent := temp;
               rightRotate(root, node)
             };
 
@@ -118,7 +126,9 @@ module RBTree {
               node := gp;
             } else {
               if (nodeKeyEquals(?node, parent.left)) {
+                var temp = node;
                 node := parent;
+                parent := temp;
                 rightRotate(root, node)
               };
 
@@ -132,7 +142,9 @@ module RBTree {
         switch(gp.right) {
           case null { 
             if (nodeKeyEquals(?node, parent.right)) {
+              var temp = node;
               node := parent;
+              parent := temp;
               leftRotate(root, node)
             };
 
@@ -145,9 +157,12 @@ module RBTree {
               uncle.red := false;
               parent.red := false;
               gp.red := true;
+              node := gp;
             } else {
               if (nodeKeyEquals(?node, parent.right)) {
+                var temp = node;
                 node := parent;
+                parent := temp;
                 leftRotate(root, node)
               };
 
@@ -162,6 +177,13 @@ module RBTree {
       if (nodeKeyEquals(?node, root.tree)) {
         break l;
       };
+
+      parent := switch (node.parent) { 
+        case null {
+          return;
+        };
+        case (?existent) existent
+      }
 
     } while (parent.red == true);
 
